@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RelacionRealizaController } from './relacion_realiza.controller';
+import { RelacionRealizaController } from './relacion.controller';
 
 describe('RelacionRealizaController', () => {
   let controller: RelacionRealizaController;
