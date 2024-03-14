@@ -1,7 +1,7 @@
 export interface IReservas {
     id: string;
     tamaño: string;
-    habitaciones: number;
+    habitaciones: string;
     estado: string;
-    precio: string;
+    precio: number;
   }
