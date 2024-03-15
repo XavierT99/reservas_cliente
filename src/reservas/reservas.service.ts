@@ -39,7 +39,7 @@ export class ReservasService {
   }
 
   insertar(Reservas: ReservasDTO) {
-    const reserv = {
+    const reserv:any = {
       id: uuidV4(),
       ...this.reservas,
     };
