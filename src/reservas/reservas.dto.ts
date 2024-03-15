@@ -10,7 +10,7 @@ import {
   export class ReservasDTO {
     @IsNotEmpty({ message: 'El campo es requerido' })
     @IsString({ message: 'Se necesita un texto' })
-    tamaño: string;
+    tamanio: string;
     @IsNotEmpty({ message: 'El campo es requerido' })
     @IsString({ message: 'Se necesita un texto' })
     habitaciones: string;
@@ -18,7 +18,7 @@ import {
     @IsNumber()
     estado: string;
     @IsNotEmpty({ message: 'El campo es requerido' })
-    precio: number;
+    precio: string;
    
   
     //@IsEmail()
