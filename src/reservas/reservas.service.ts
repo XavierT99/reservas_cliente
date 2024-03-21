@@ -1,62 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { v4 as uuidV4 } from 'uuid';
-import { IReserva } from './reservas.interfaces';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { ReservasDTO } from './reservas.dto';
+import { Reserva, ReservaDocument } from './schema/reservas.schema';
 
 @Injectable()
 export class ReservasService {
-  //constructor() {
-  //  const clientS = new ClientesService();
-  //  clientS.uno('1');
-  // const relacion = {
-  //   idcliente : '',
-  //   idReserva:''
-  //};
-  // }
+  constructor(@InjectModel(Reserva.name) private reservaModel: Model<ReservaDocument>) {}
 
-  reservas: IReserva[] = [
-    {
-      id: '1',
-      tamanio: 'grande',
-      habitaciones: '2',
-      estado: 'libre',
-      precio: '50',
-    },
-    {
-      id: '2',
-      tamanio: 'pequeña',
-      habitaciones: '1',
-      estado: 'libre',
-      precio: '25',
-    },
-  ];
-  todos() {
-    return this.reservas;
+  async todos(): Promise<Reserva[]> {
+    return await this.reservaModel.find().exec();
   }
 
-  uno(id: string) {
-    return this.reservas.find((reservas) => reservas.id == id);
+  async uno(id: string): Promise<Reserva> {
+    return await this.reservaModel.findById(id).exec();
   }
 
-  insertar(Reservas: ReservasDTO) {
-    const reserv:any = {
-      id: uuidV4(),
-      ...this.reservas,
-    };
-    this.reservas.push(reserv);
-    return this.reservas;
+  async insertar(reserva: ReservasDTO): Promise<Reserva> {
+    const nuevaReserva = new this.reservaModel(reserva);
+    return await nuevaReserva.save();
   }
 
-  actualizar(id: string, reservasActualizar: ReservasDTO) {
-    const nuevoemp = { id, ...reservasActualizar };
-    this.reservas = this.reservas.map((empleado) =>
-      empleado.id === id ? nuevoemp : empleado,
-    );
-    return nuevoemp;
+  async actualizar(id: string, reservaActualizar: ReservasDTO): Promise<Reserva> {
+    return await this.reservaModel.findByIdAndUpdate(id, reservaActualizar, { new: true }).exec();
   }
 
-  eliminar(id: string) {
-    this.reservas = this.reservas.filter((reservas) => reservas.id !== id);
+  async eliminar(id: string): Promise<string> {
+    await this.reservaModel.findByIdAndDelete(id).exec();
     return 'Reserva Eliminada';
   }
 }
