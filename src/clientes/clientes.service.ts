@@ -1,51 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { ICliente } from './cliente.interfaces';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { ClienteDTO } from './cliente.dto';
-import { v4 as uuidV4 } from 'uuid';
+import { Cliente, ClienteDocument } from './schema/cliente.schema';
+
 @Injectable()
 export class ClientesService {
-  clientes: ICliente[] = [
-    {
-    id:"1",
-    nombres:"Xavier",
-    apellidos:"Torres",
-    edad:24,
-    cedula:"1003677091"},
-    {
-    id:"2",
-    nombres:"Xavier",
-    apellidos:"Torres",
-    edad:24,
-    cedula:"1003677091"}
-];
-  todos() {
-    return this.clientes;
+  constructor(@InjectModel(Cliente.name) private clienteModel: Model<ClienteDocument>) {}
+
+  async todos(): Promise<Cliente[]> {
+    return await this.clienteModel.find().exec();
   }
 
-  uno(id: string) {
-    return this.clientes.find((cliente) => cliente.id == id);
+  async uno(id: string): Promise<Cliente> {
+    return await this.clienteModel.findById(id).exec();
   }
  
-  insertar(cliente: ClienteDTO) {
-    const client = {
-        id: uuidV4(),
-        ...cliente,
-      };
-      this.clientes.push(client);
-      return this.clientes;
+  async insertar(cliente: ClienteDTO): Promise<Cliente> {
+    const nuevoCliente = new this.clienteModel(cliente);
+    return await nuevoCliente.save();
   }
 
-  actualizar(id: string, clienteActualizar: ClienteDTO) {
-    const nuevoemp = { id, ...clienteActualizar };
-    this.clientes = this.clientes.map((empleado) =>
-      empleado.id === id ? nuevoemp : empleado,
-    );
-    return nuevoemp;
+  async actualizar(id: string, clienteActualizar: ClienteDTO): Promise<Cliente> {
+    return await this.clienteModel.findByIdAndUpdate(id, clienteActualizar, { new: true }).exec();
   }
 
-  eliminar(id: string) {
-    this.clientes = this.clientes.filter((cliente) => cliente.id !== id);
+  async eliminar(id: string): Promise<string> {
+    await this.clienteModel.findByIdAndDelete(id).exec();
     return 'Cliente Eliminado';
   }
-
 }
